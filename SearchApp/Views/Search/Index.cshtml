@@ -1,4 +1,5 @@
-﻿@{
+﻿@model SearchApp.Models.SearchModel
+@{
     ViewBag.Title = "Search";
 }
 
@@ -7,23 +8,22 @@
 @using (Html.BeginForm("Index","Search",FormMethod.Get))
 {
     <p> Search: @Html.TextBox("SearchString") <br />   
-    <input type="submit" value="Filter" /></p> 
+    @Html.DropDownListFor(m => m.Domain, new SelectList(Model.Domain, "Key", "Value"))
+    <input type="submit" value="Filter" /></p>
 }
 
-    <table>
-    <head></head>
-    @for (int i = 0; i < ViewBag.textResults.Count; i++)
-    {
-        <tr>
-            <td><img src=@ViewBag.imageUrls[i] /></td>
-            <td>@ViewBag.textResults[i]</td>
-        </tr>
-        <tr>
-            <td>@ViewBag.topicResults[i]</td>
-        </tr>
-        <tr><td><br /></td></tr>
-    }
-    </table>
+
+<table>
+<head></head>
+@for (int i = 0; i < ViewBag.textResults.Count; i++)
+{
+    <tr>
+        <td><img src=@ViewBag.imageUrls[i] /></td>
+        <td>@ViewBag.textResults[i]</td>
+    </tr>
+    <tr><td><br /></td></tr>
+}
+</table>
 
 
 <!--

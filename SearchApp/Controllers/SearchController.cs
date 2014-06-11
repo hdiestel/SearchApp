@@ -4,6 +4,9 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Freebase4net;
+using System.Threading.Tasks;
+using SearchApp.Models;
+using System.Dynamic;
 
 
 namespace SearchApp.Controllers
@@ -12,41 +15,43 @@ namespace SearchApp.Controllers
     { 
         //
         // GET: /Search/
-        public ActionResult Index(string searchString)
+        public ActionResult Index(string searchString, string Domain)
         {
             List<string> textResults = new List<string>();
             List<string> imageUrls = new List<string>();
             List<string> topicResults = new List<string>();
 
-            if(!String.IsNullOrEmpty(searchString))
+            if (!String.IsNullOrEmpty(searchString) && !String.IsNullOrEmpty(Domain))
             {
                 SearchService searchService = FreebaseServices.CreateSearchService();
                 TextService textService = FreebaseServices.CreateTextService();
                 ImageService imageService = FreebaseServices.CreateImageService();
+                MqlReadService mqlReadService = FreebaseServices.CreateMqlReadService();
                 TopicService topicService = FreebaseServices.CreateTopicService();
-                TextServiceResponse textResponse_plain;
-                TopicServiceResponse topicResponse;
+
                 string id, imageUrl;
-                SearchServiceResponse searchResponse = searchService.Read(searchString);
-                
+                SearchServiceResponse searchResponse = searchService.Read(searchString, filter: "(any domain:/" + Domain + ")");
+
                 foreach(SearchResult result in searchResponse.Results)
                 {
                     id = result.Id;
-                    textResponse_plain = textService.Read(id, TextFormat.Plain);
-                    textResults.Add(textResponse_plain.Result);
-                    imageUrl = imageService.GetImageUrl(id, maxwidth: "150", maxheight: "150");
-                    imageUrls.Add(imageUrl);
-                }
+                    string textResponse = textService.Read(id).Result;
 
-                topicResponse = topicService.Read("/en/kiel");
-                topicResults.Add(topicResponse.ToString());
+                    
+                    if (!String.IsNullOrEmpty(textResponse))
+                    {
+                        textResults.Add(textResponse);
+                        imageUrl = imageService.GetImageUrl(id, maxwidth: "150", maxheight: "150");
+                        imageUrls.Add(imageUrl);
+                    }
+                }
             }
 
             ViewBag.textResults = textResults;
             ViewBag.imageUrls = imageUrls;
-            ViewBag.topicResults = topicResults;
 
-            return View();
+            var model = new SearchModel();
+            return View(model);
         }
 	}
 }
