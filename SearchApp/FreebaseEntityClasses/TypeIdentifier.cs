@@ -4,13 +4,15 @@ using System.Linq;
 using System.Web;
 using Freebase4net;
 using System.Dynamic;
+using Newtonsoft.Json;
 
 namespace SearchApp.FreebaseEntityClasses
 {
     public class TypeIdentifier
     {
         //list which will contain all the types of a given ID
-        public List<dynamic> typesList;
+        public List<dynamic> mqlResult;
+        public List<string> typesList = new List<string>();
 
         //constructor
         public TypeIdentifier(string id)
@@ -22,11 +24,22 @@ namespace SearchApp.FreebaseEntityClasses
 
             //filling the fields of the query
             mql.id = id;
-            mql.type = null; // TODO - DOES NOT WORK. FIND A WAY TO REPRESENT [] FROM MQL QUERIES 
-
+            mql.type = new Dictionary<Object, Object>() {
+                {"id",null}
+            };
+       
             //querying
             MqlReadServiceResponse mqlResponse = mqlReadService.Read(mql);
-            this.typesList = mqlResponse.Results;
+            this.mqlResult = mqlResponse.Results;
+            for (int i = 0; i < this.mqlResult.Count; i++)
+            {
+                var typeIds = this.mqlResult[i]["type"];
+                for(int j = 0; j < typeIds.Count; j++)
+                {
+                    string typeName = typeIds[j]["id"];
+                    typesList.Add(typeName);
+                }
+            }
         }
 
         /*
@@ -36,11 +49,11 @@ namespace SearchApp.FreebaseEntityClasses
         public string GetUniqueType()
         {
             string type = "";
-
+            
             //looking into every type we've got
             for (int i = 0; i<this.typesList.Count; i++)
             {
-                string currentType = this.typesList[i]["types"];
+                string currentType = this.typesList[i];
 
                //checking if the current type is one of ours
                 switch(currentType) {
@@ -56,8 +69,6 @@ namespace SearchApp.FreebaseEntityClasses
                     case "/location/country":
                         type = "country";
                         break;
-                    default:                       
-                        return "generic";
                 }
             }
             return type;
