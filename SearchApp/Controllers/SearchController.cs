@@ -7,6 +7,7 @@ using Freebase4net;
 using System.Threading.Tasks;
 using SearchApp.Models;
 using System.Dynamic;
+using SearchApp.FreebaseEntityClasses;
 
 
 namespace SearchApp.Controllers
@@ -29,7 +30,7 @@ namespace SearchApp.Controllers
                 MqlReadService mqlReadService = FreebaseServices.CreateMqlReadService();
                 TopicService topicService = FreebaseServices.CreateTopicService();
 
-                string id, imageUrl;
+                string id, imageUrl, idType;
                 SearchServiceResponse searchResponse = searchService.Read(searchString, filter: "(any domain:/" + Domain + ")");
 
                 foreach(SearchResult result in searchResponse.Results)
@@ -37,9 +38,12 @@ namespace SearchApp.Controllers
                     id = result.Id;
                     string textResponse = textService.Read(id).Result;
 
+                    TypeIdentifier type = new TypeIdentifier(id);
+                    idType = type.GetUniqueType();
                     
                     if (!String.IsNullOrEmpty(textResponse))
                     {
+                        textResponse += idType; //just to check if GetUniqueType is working
                         textResults.Add(textResponse);
                         imageUrl = imageService.GetImageUrl(id, maxwidth: "150", maxheight: "150");
                         imageUrls.Add(imageUrl);
