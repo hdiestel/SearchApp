@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using SearchApp.Models;
+using SearchApp.DataAccess.Interfaces;
+using SearchApp.DataAccess.Implementation;
 
 namespace SearchApp.Controllers
 {
@@ -14,11 +16,17 @@ namespace SearchApp.Controllers
     public class DomainController : Controller
     {
         private DataContext db = new DataContext();
+        private IUnitOfWork unitOfWork;
+
+        public DomainController()
+        {
+            unitOfWork = new UnitOfWork<DataContext>();
+        }
 
         // GET: /Domain/
         public ActionResult Index()
         {
-            return View(db.Domain.ToList());
+            return View(unitOfWork.Get<Domains>(orderBy: q => q.OrderBy(u => u.Name)).ToList());
         }
 
         // GET: /Domain/Details/5
@@ -28,12 +36,12 @@ namespace SearchApp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Domains domains = db.Domain.Find(id);
-            if (domains == null)
+            Domains domain = unitOfWork.GetById<Domains>(id);
+            if (domain == null)
             {
                 return HttpNotFound();
             }
-            return View(domains);
+            return View(domain);
         }
 
         // GET: /Domain/Create
@@ -47,16 +55,16 @@ namespace SearchApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include="ID,Name,FreebaseName")] Domains domains)
+        public ActionResult Create([Bind(Include="ID,Name,FreebaseName")] Domains domain)
         {
             if (ModelState.IsValid)
             {
-                db.Domain.Add(domains);
-                db.SaveChanges();
+                unitOfWork.Insert<Domains>(domain);
+                unitOfWork.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(domains);
+            return View(domain);
         }
 
         // GET: /Domain/Edit/5
@@ -66,12 +74,12 @@ namespace SearchApp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Domains domains = db.Domain.Find(id);
-            if (domains == null)
+            Domains domain = unitOfWork.GetById<Domains>(id);
+            if (domain == null)
             {
                 return HttpNotFound();
             }
-            return View(domains);
+            return View(domain);
         }
 
         // POST: /Domain/Edit/5
@@ -79,15 +87,15 @@ namespace SearchApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include="ID,Name,FreebaseName")] Domains domains)
+        public ActionResult Edit([Bind(Include="ID,Name,FreebaseName")] Domains domain)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(domains).State = EntityState.Modified;
-                db.SaveChanges();
+                unitOfWork.Update<Domains>(domain);
+                unitOfWork.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(domains);
+            return View(domain);
         }
 
         // GET: /Domain/Delete/5
@@ -97,12 +105,12 @@ namespace SearchApp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Domains domains = db.Domain.Find(id);
-            if (domains == null)
+            Domains domain = unitOfWork.GetById<Domains>(id);
+            if (domain == null)
             {
                 return HttpNotFound();
             }
-            return View(domains);
+            return View(domain);
         }
 
         // POST: /Domain/Delete/5
@@ -110,9 +118,8 @@ namespace SearchApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Domains domains = db.Domain.Find(id);
-            db.Domain.Remove(domains);
-            db.SaveChanges();
+            unitOfWork.DeleteById<Domains>(id);
+            unitOfWork.SaveChanges();
             return RedirectToAction("Index");
         }
 

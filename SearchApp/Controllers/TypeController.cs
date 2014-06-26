@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using SearchApp.Models;
+using SearchApp.DataAccess.Interfaces;
+using SearchApp.DataAccess.Implementation;
 
 namespace SearchApp.Controllers
 {
@@ -14,6 +16,12 @@ namespace SearchApp.Controllers
     public class TypeController : Controller
     {
         private DataContext db = new DataContext();
+        private IUnitOfWork unitOfWork;
+
+        public TypeController()
+        {
+            unitOfWork = new UnitOfWork<DataContext>();
+        }
 
         // GET: /Type/
         public ActionResult Index()
@@ -28,12 +36,12 @@ namespace SearchApp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Types types = db.Type.Find(id);
-            if (types == null)
+            Types type = unitOfWork.GetById<Types>(id);
+            if (type == null)
             {
                 return HttpNotFound();
             }
-            return View(types);
+            return View(type);
         }
 
         // GET: /Type/Create
@@ -47,16 +55,16 @@ namespace SearchApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include="ID,Name,FreebaseName")] Types types)
+        public ActionResult Create([Bind(Include="ID,Name,FreebaseName")] Types type)
         {
             if (ModelState.IsValid)
             {
-                db.Type.Add(types);
-                db.SaveChanges();
+                unitOfWork.Insert<Types>(type);
+                unitOfWork.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(types);
+            return View(type);
         }
 
         // GET: /Type/Edit/5
@@ -66,12 +74,12 @@ namespace SearchApp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Types types = db.Type.Find(id);
-            if (types == null)
+            Types type = unitOfWork.GetById<Types>(id);
+            if (type == null)
             {
                 return HttpNotFound();
             }
-            return View(types);
+            return View(type);
         }
 
         // POST: /Type/Edit/5
@@ -79,15 +87,15 @@ namespace SearchApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include="ID,Name,FreebaseName")] Types types)
+        public ActionResult Edit([Bind(Include = "ID,Name,FreebaseName")] Types type)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(types).State = EntityState.Modified;
-                db.SaveChanges();
+                unitOfWork.Update<Types>(type);
+                unitOfWork.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(types);
+            return View(type);
         }
 
         // GET: /Type/Delete/5
@@ -97,12 +105,12 @@ namespace SearchApp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Types types = db.Type.Find(id);
-            if (types == null)
+            Types type = unitOfWork.GetById<Types>(id);
+            if (type == null)
             {
                 return HttpNotFound();
             }
-            return View(types);
+            return View(type);
         }
 
         // POST: /Type/Delete/5
@@ -110,9 +118,8 @@ namespace SearchApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Types types = db.Type.Find(id);
-            db.Type.Remove(types);
-            db.SaveChanges();
+            unitOfWork.DeleteById<Types>(id);
+            unitOfWork.SaveChanges();
             return RedirectToAction("Index");
         }
 

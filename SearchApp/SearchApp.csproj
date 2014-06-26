@@ -181,6 +181,10 @@
     <Compile Include="Controllers\DomainController.cs" />
     <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\TypeController.cs" />
+    <Compile Include="DataAccess\Implementation\GenericRepository.cs" />
+    <Compile Include="DataAccess\Implementation\UnitOfWork.cs" />
+    <Compile Include="DataAccess\Interfaces\IRepository.cs" />
+    <Compile Include="DataAccess\Interfaces\IUnitOfWork.cs" />
     <Compile Include="FreebaseEntityClasses\TypeIdentifier.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -216,6 +220,8 @@
     <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\Account\_RemoveAccountPartial.cshtml" />
     <Content Include="Views\Account\_SetPasswordPartial.cshtml" />
+    <Content Include="ClassDiagram2.cd" />
+    <Content Include="ClassDiagram3.cd" />
     <None Include="_bin_deployableAssemblies\x86\sqlcese40.dll" />
     <None Include="_bin_deployableAssemblies\x86\sqlceqp40.dll" />
     <None Include="_bin_deployableAssemblies\x86\sqlceme40.dll" />

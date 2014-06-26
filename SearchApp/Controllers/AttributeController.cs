@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using SearchApp.Models;
+using SearchApp.DataAccess.Interfaces;
+using SearchApp.DataAccess.Implementation;
 
 namespace SearchApp.Controllers
 {
@@ -14,10 +16,17 @@ namespace SearchApp.Controllers
     public class AttributeController : Controller
     {
         private DataContext db = new DataContext();
+        private IUnitOfWork unitOfWork;
+
+        public AttributeController()
+        {
+            unitOfWork = new UnitOfWork<DataContext>();
+        }
 
         // GET: /Attribute/
         public ActionResult Index()
         {
+            
             return View(db.Attribute.ToList());
         }
 
@@ -28,12 +37,12 @@ namespace SearchApp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Attributes attributes = db.Attribute.Find(id);
-            if (attributes == null)
+            Attributes attribute = unitOfWork.GetById<Attributes>(id);
+            if (attribute == null)
             {
                 return HttpNotFound();
             }
-            return View(attributes);
+            return View(attribute);
         }
 
         // GET: /Attribute/Create
@@ -47,16 +56,16 @@ namespace SearchApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include="ID,Name,FreebaseName")] Attributes attributes)
+        public ActionResult Create([Bind(Include="ID,Name,FreebaseName")] Attributes attribute)
         {
             if (ModelState.IsValid)
             {
-                db.Attribute.Add(attributes);
-                db.SaveChanges();
+                unitOfWork.Insert<Attributes>(attribute);
+                unitOfWork.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(attributes);
+            return View(attribute);
         }
 
         // GET: /Attribute/Edit/5
@@ -66,12 +75,12 @@ namespace SearchApp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Attributes attributes = db.Attribute.Find(id);
-            if (attributes == null)
+            Attributes attribute = unitOfWork.GetById<Attributes>(id);
+            if (attribute == null)
             {
                 return HttpNotFound();
             }
-            return View(attributes);
+            return View(attribute);
         }
 
         // POST: /Attribute/Edit/5
@@ -79,15 +88,15 @@ namespace SearchApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include="ID,Name,FreebaseName")] Attributes attributes)
+        public ActionResult Edit([Bind(Include="ID,Name,FreebaseName")] Attributes attribute)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(attributes).State = EntityState.Modified;
-                db.SaveChanges();
+                unitOfWork.Update<Attributes>(attribute);
+                unitOfWork.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(attributes);
+            return View(attribute);
         }
 
         // GET: /Attribute/Delete/5
@@ -97,12 +106,12 @@ namespace SearchApp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Attributes attributes = db.Attribute.Find(id);
-            if (attributes == null)
+            Attributes attribute = unitOfWork.GetById<Attributes>(id);
+            if (attribute == null)
             {
                 return HttpNotFound();
             }
-            return View(attributes);
+            return View(attribute);
         }
 
         // POST: /Attribute/Delete/5
@@ -110,9 +119,8 @@ namespace SearchApp.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Attributes attributes = db.Attribute.Find(id);
-            db.Attribute.Remove(attributes);
-            db.SaveChanges();
+            unitOfWork.DeleteById<Attributes>(id);
+            unitOfWork.SaveChanges();
             return RedirectToAction("Index");
         }
 
