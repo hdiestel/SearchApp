@@ -15,7 +15,6 @@ namespace SearchApp.Controllers
     [Authorize]
     public class TypeController : Controller
     {
-        private DataContext db = new DataContext();
         private IUnitOfWork unitOfWork;
 
         public TypeController()
@@ -26,7 +25,7 @@ namespace SearchApp.Controllers
         // GET: /Type/
         public ActionResult Index()
         {
-            return View(db.Type.ToList());
+            return View(unitOfWork.Get<Types>(orderBy: q => q.OrderBy(u => u.Name)).ToList());
         }
 
         // GET: /Type/Details/5
@@ -127,7 +126,7 @@ namespace SearchApp.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                unitOfWork.Dispose();
             }
             base.Dispose(disposing);
         }

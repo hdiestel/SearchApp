@@ -15,7 +15,6 @@ namespace SearchApp.Controllers
     [Authorize]
     public class AttributeController : Controller
     {
-        private DataContext db = new DataContext();
         private IUnitOfWork unitOfWork;
 
         public AttributeController()
@@ -26,8 +25,8 @@ namespace SearchApp.Controllers
         // GET: /Attribute/
         public ActionResult Index()
         {
-            
-            return View(db.Attribute.ToList());
+
+            return View(unitOfWork.Get<Attributes>(orderBy: q => q.OrderBy(u => u.Name)).ToList());
         }
 
         // GET: /Attribute/Details/5
@@ -128,7 +127,7 @@ namespace SearchApp.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                unitOfWork.Dispose();
             }
             base.Dispose(disposing);
         }

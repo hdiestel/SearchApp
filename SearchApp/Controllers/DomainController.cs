@@ -15,7 +15,6 @@ namespace SearchApp.Controllers
     [Authorize]
     public class DomainController : Controller
     {
-        private DataContext db = new DataContext();
         private IUnitOfWork unitOfWork;
 
         public DomainController()
@@ -127,7 +126,7 @@ namespace SearchApp.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                unitOfWork.Dispose();
             }
             base.Dispose(disposing);
         }
