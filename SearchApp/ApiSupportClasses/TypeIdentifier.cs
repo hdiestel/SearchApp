@@ -6,7 +6,9 @@ using Freebase4net;
 using System.Dynamic;
 using Newtonsoft.Json;
 
-namespace SearchApp.FreebaseEntityClasses
+//TODO: move to FreebaseEntity
+
+namespace SearchApp.ApiSupportClasses
 {
     public class TypeIdentifier
     {

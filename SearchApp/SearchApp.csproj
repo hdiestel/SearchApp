@@ -172,6 +172,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Compile Include="ApiSupportClasses\FreebaseEntity.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -185,7 +186,7 @@
     <Compile Include="DataAccess\Implementation\UnitOfWork.cs" />
     <Compile Include="DataAccess\Interfaces\IRepository.cs" />
     <Compile Include="DataAccess\Interfaces\IUnitOfWork.cs" />
-    <Compile Include="FreebaseEntityClasses\TypeIdentifier.cs" />
+    <Compile Include="ApiSupportClasses\TypeIdentifier.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

@@ -15,11 +15,12 @@
 
 <table>
 <head></head>
-@for (int i = 0; i < ViewBag.textResults.Count; i++)
+@for (int i = 0; i < ViewBag.results.Count; i++)
 {
     <tr>
-        <td><img src=@ViewBag.imageUrls[i] /></td>
-        <td>@ViewBag.textResults[i]</td>
+        <td><img src=@ViewBag.results[i].imageUrl /></td>
+        <td>    </td>
+        <td>@ViewBag.results[i].description</td>
     </tr>
     <tr><td><br /></td></tr>
 }
