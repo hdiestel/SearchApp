@@ -34,6 +34,10 @@ namespace SearchApp.Controllers
                     FreebaseEntity newEntity = new FreebaseEntity(result.Id);
                     newEntity.getDescription();
                     newEntity.getImageUrl();
+
+                    //testing types
+                    newEntity.identifyTypes();
+                    newEntity.getFreebaseType();
                     
                     //it only takes results which does not have a empty description
                     if (!String.IsNullOrEmpty(newEntity.description))

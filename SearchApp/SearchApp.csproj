@@ -186,7 +186,6 @@
     <Compile Include="DataAccess\Implementation\UnitOfWork.cs" />
     <Compile Include="DataAccess\Interfaces\IRepository.cs" />
     <Compile Include="DataAccess\Interfaces\IUnitOfWork.cs" />
-    <Compile Include="ApiSupportClasses\TypeIdentifier.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
