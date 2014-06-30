@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Linq.Expressions;
+using SearchApp.Models;
 
 namespace SearchApp.DataAccess.Interfaces
 {
@@ -119,5 +120,7 @@ namespace SearchApp.DataAccess.Interfaces
         /// persistent in die Datenbank schreiben.
         /// </example>
         void SaveChanges(bool withDisposing = false);
+
+        DataContext getContext();
     }
 }

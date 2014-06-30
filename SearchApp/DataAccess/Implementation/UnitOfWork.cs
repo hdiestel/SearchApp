@@ -130,5 +130,11 @@ namespace SearchApp.DataAccess.Implementation
 
             return (IRepository<TEntity>)repositories[typeof(TEntity)];
         }
+
+        public DataContext getContext()
+        {
+            InitContext();
+            return context;
+        }
     }
 }

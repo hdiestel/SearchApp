@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Linq.Expressions;
+using SearchApp.Models;
 
 namespace SearchApp.DataAccess.Interfaces
 {
@@ -58,5 +59,6 @@ namespace SearchApp.DataAccess.Interfaces
         /// </summary>
         /// <param name="entity">Die zu löschende Entität.</param>
         void Delete(TEntity entity);
+        DataContext getContext();
     }
 }

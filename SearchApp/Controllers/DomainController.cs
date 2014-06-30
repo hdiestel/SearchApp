@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using SearchApp.Models;
 using SearchApp.DataAccess.Interfaces;
 using SearchApp.DataAccess.Implementation;
+using System.Collections.ObjectModel;
 
 namespace SearchApp.Controllers
 {
@@ -46,6 +47,7 @@ namespace SearchApp.Controllers
         // GET: /Domain/Create
         public ActionResult Create()
         {
+            ViewBag.Types = unitOfWork.Get<Types>().ToList<Types>();
             return View();
         }
 
@@ -58,6 +60,22 @@ namespace SearchApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                var typeIds = new List<int>();
+                // Get selected types
+                string selectedIds = Request["types[]"];
+                if (selectedIds != null)
+                {
+                    string[] checkedIds = selectedIds.Split(',');
+                    typeIds.AddRange(checkedIds.Select(id => Convert.ToInt32(id)));
+                }
+                // Add Types to this Domain
+                domain.Types = new Collection<Types>();
+                foreach (int id in typeIds)
+                {
+                    Types type = unitOfWork.GetById<Types>(id);
+                    domain.Types.Add(type);
+                }
+
                 unitOfWork.Insert<Domains>(domain);
                 unitOfWork.SaveChanges();
                 return RedirectToAction("Index");
@@ -78,6 +96,15 @@ namespace SearchApp.Controllers
             {
                 return HttpNotFound();
             }
+
+            var selectedTypes = domain.Types;
+            var selectableTypes = unitOfWork.Get<Types>().ToList<Types>();
+            foreach (var type in selectedTypes)
+            {
+                selectableTypes.Remove(type);
+            }
+            ViewBag.SelectedTypes = selectedTypes;
+            ViewBag.SelectableTypes = selectableTypes;
             return View(domain);
         }
 
@@ -90,8 +117,29 @@ namespace SearchApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                unitOfWork.Update<Domains>(domain);
-                unitOfWork.SaveChanges();
+                var typeIds = new List<int>();
+                // Get selected types
+                string selectedIds = Request["types[]"];
+                if (selectedIds != null)
+                {
+                    string[] checkedIds = selectedIds.Split(',');
+                    typeIds.AddRange(checkedIds.Select(id => Convert.ToInt32(id)));
+                }
+                // Add Types to this Domain
+                int domainId = domain.ID;
+                // load domain with types from the database
+                var domainItem = unitOfWork.getContext().Domain.Include(r => r.Types).Single(r => r.ID == domainId);
+                // apply the values that have changed
+                unitOfWork.getContext().Entry(domainItem).CurrentValues.SetValues(domain);
+                // clear the types to let the framework know they have to be processed
+                domainItem.Types.Clear();
+                // now reload the types again, but from the list of selected ones provided by the view
+                foreach (int typeId in typeIds)
+                {
+                    domainItem.Types.Add(unitOfWork.GetById<Types>(typeId));
+                }
+                //finally, save changes as usual
+                unitOfWork.getContext().SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(domain);

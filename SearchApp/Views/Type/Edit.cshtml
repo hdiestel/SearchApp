@@ -38,6 +38,17 @@
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>
         </div>
+
+        <select id="attribute" class="multiselect" multiple="multiple" name="attributes[]">
+            @foreach (SearchApp.Models.Attributes attribute in ViewBag.SelectedAttributes)
+            {
+                <option value=@attribute.ID selected="selected">@attribute.Name</option>
+            }
+            @foreach (SearchApp.Models.Attributes attribute in ViewBag.SelectableAttributes)
+            {
+                <option value=@attribute.ID>@attribute.Name</option>
+            }
+        </select>
     </div>
 }
 

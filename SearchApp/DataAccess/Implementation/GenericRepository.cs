@@ -25,6 +25,11 @@ namespace SearchApp.DataAccess.Implementation
             this.context = context;
         }
 
+        public DataContext getContext()
+        {
+            return context;
+        }
+
         public void Insert(TEntity entity)
         {
             set.Add(entity);
@@ -40,6 +45,7 @@ namespace SearchApp.DataAccess.Implementation
             {
                 context.Entry<TEntity>(entity).CurrentValues.SetValues(entity);
             }
+           
 
             context.Entry<TEntity>(entity).State = System.Data.Entity.EntityState.Modified;
         }

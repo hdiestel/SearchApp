@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using SearchApp.Models;
 using SearchApp.DataAccess.Interfaces;
 using SearchApp.DataAccess.Implementation;
+using System.Collections.ObjectModel;
 
 namespace SearchApp.Controllers
 {
@@ -46,6 +47,7 @@ namespace SearchApp.Controllers
         // GET: /Type/Create
         public ActionResult Create()
         {
+            ViewBag.Attributes = unitOfWork.Get<Attributes>().ToList<Attributes>();
             return View();
         }
 
@@ -58,6 +60,22 @@ namespace SearchApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                var attributeIds = new List<int>();
+                // Get selected types
+                string selectedIds = Request["attributes[]"];
+                if (selectedIds != null)
+                {
+                    string[] checkedIds = selectedIds.Split(',');
+                    attributeIds.AddRange(checkedIds.Select(id => Convert.ToInt32(id)));
+                }
+                // Add Types to this Domain
+                type.Attributes = new Collection<Attributes>();
+                foreach (int id in attributeIds)
+                {
+                    Attributes attribute = unitOfWork.GetById<Attributes>(id);
+                    type.Attributes.Add(attribute);
+                }
+
                 unitOfWork.Insert<Types>(type);
                 unitOfWork.SaveChanges();
                 return RedirectToAction("Index");
@@ -78,6 +96,15 @@ namespace SearchApp.Controllers
             {
                 return HttpNotFound();
             }
+
+            var selectedAttributes = type.Attributes;
+            var selectableAttributes = unitOfWork.Get<Attributes>().ToList<Attributes>();
+            foreach (var attribute in selectedAttributes)
+            {
+                selectableAttributes.Remove(attribute);
+            }
+            ViewBag.SelectedAttributes = selectedAttributes;
+            ViewBag.SelectableAttributes = selectableAttributes;
             return View(type);
         }
 
@@ -90,8 +117,29 @@ namespace SearchApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                unitOfWork.Update<Types>(type);
-                unitOfWork.SaveChanges();
+                var attributeIds = new List<int>();
+                // Get selected attributes
+                string selectedIds = Request["attributes[]"];
+                if (selectedIds != null)
+                {
+                    string[] checkedIds = selectedIds.Split(',');
+                    attributeIds.AddRange(checkedIds.Select(id => Convert.ToInt32(id)));
+                }
+                // Add attributes to this Type
+                int typeId = type.ID;
+                // load domain with types from the database
+                var typeItem = unitOfWork.getContext().Type.Include(r => r.Attributes).Single(r => r.ID == typeId);
+                // apply the values that have changed
+                unitOfWork.getContext().Entry(typeItem).CurrentValues.SetValues(type);
+                // clear the types to let the framework know they have to be processed
+                typeItem.Attributes.Clear();
+                // now reload the types again, but from the list of selected ones provided by the view
+                foreach (int attributeId in attributeIds)
+                {
+                    typeItem.Attributes.Add(unitOfWork.GetById<Attributes>(attributeId));
+                }
+                //finally, save changes as usual
+                unitOfWork.getContext().SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(type);

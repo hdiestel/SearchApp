@@ -33,6 +33,17 @@
             </div>
         </div>
 
+        <select id="type" class="multiselect" multiple="multiple" name="types[]">
+            @foreach (SearchApp.Models.Types type in ViewBag.SelectedTypes)
+            {
+                <option value=@type.ID selected="selected">@type.Name</option>
+            }
+            @foreach (SearchApp.Models.Types type in ViewBag.SelectableTypes)
+            {
+                <option value=@type.ID>@type.Name</option>
+            }
+        </select>
+
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />
