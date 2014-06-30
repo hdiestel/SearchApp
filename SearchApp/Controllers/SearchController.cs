@@ -7,7 +7,7 @@ using Freebase4net;
 using System.Threading.Tasks;
 using SearchApp.Models;
 using System.Dynamic;
-using SearchApp.FreebaseEntityClasses;
+using SearchApp.ApiSupportClasses;
 
 
 namespace SearchApp.Controllers
@@ -18,41 +18,38 @@ namespace SearchApp.Controllers
         // GET: /Search/
         public ActionResult Index(string searchString, string Domain)
         {
-            List<string> textResults = new List<string>();
-            List<string> imageUrls = new List<string>();
-            List<string> topicResults = new List<string>();
+            //List of FreebaseEntity objects
+            List<FreebaseEntity> results = new List<FreebaseEntity>();
 
             if (!String.IsNullOrEmpty(searchString) && !String.IsNullOrEmpty(Domain))
             {
+                //Creating SearchService and performing a search query
                 SearchService searchService = FreebaseServices.CreateSearchService();
-                TextService textService = FreebaseServices.CreateTextService();
-                ImageService imageService = FreebaseServices.CreateImageService();
-                MqlReadService mqlReadService = FreebaseServices.CreateMqlReadService();
-                TopicService topicService = FreebaseServices.CreateTopicService();
-
-                string id, imageUrl, idType;
                 SearchServiceResponse searchResponse = searchService.Read(searchString, filter: "(any domain:/" + Domain + ")");
 
+                //Iterating over every result
                 foreach(SearchResult result in searchResponse.Results)
                 {
-                    id = result.Id;
-                    string textResponse = textService.Read(id).Result;
+                    //creating a new instance of FreebaseEntity and retrieving description and imageURL
+                    FreebaseEntity newEntity = new FreebaseEntity(result.Id);
+                    newEntity.getDescription();
+                    newEntity.getImageUrl();
 
-                    TypeIdentifier type = new TypeIdentifier(id);
-                    idType = type.GetUniqueType();
+                    //testing types
+                    newEntity.identifyTypes();
+                    newEntity.getFreebaseType();
                     
-                    if (!String.IsNullOrEmpty(textResponse))
+                    //it only takes results which does not have a empty description
+                    if (!String.IsNullOrEmpty(newEntity.description))
                     {
-                        textResponse += idType; //just to check if GetUniqueType is working
-                        textResults.Add(textResponse);
-                        imageUrl = imageService.GetImageUrl(id, maxwidth: "150", maxheight: "150");
-                        imageUrls.Add(imageUrl);
+                        results.Add(newEntity);
                     }
                 }
+
             }
 
-            ViewBag.textResults = textResults;
-            ViewBag.imageUrls = imageUrls;
+            //sending the results to the View (Index)
+            ViewBag.results = results;
 
             var model = new SearchModel();
             return View(model);
