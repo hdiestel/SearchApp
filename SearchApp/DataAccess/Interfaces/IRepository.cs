@@ -59,6 +59,6 @@ namespace SearchApp.DataAccess.Interfaces
         /// </summary>
         /// <param name="entity">Die zu löschende Entität.</param>
         void Delete(TEntity entity);
-        DataContext getContext();
+
     }
 }

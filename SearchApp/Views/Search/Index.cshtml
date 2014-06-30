@@ -1,4 +1,4 @@
-﻿@model SearchApp.Models.SearchModel
+﻿@model SearchApp.Models.Domains
 @{
     ViewBag.Title = "Search";
 }
@@ -7,14 +7,16 @@
 
 @using (Html.BeginForm("Index","Search",FormMethod.Get))
 {
-    <p> Search: @Html.TextBox("SearchString") <br />   
-    @Html.DropDownListFor(m => m.Domain, new SelectList(Model.Domain, "Key", "Value"))
-    <input type="submit" value="Filter" /></p>
+    <p> Search: @Html.TextBox("SearchString") 
+
+    @Html.LabelFor(model => model.ID, "Domain")
+    @Html.DropDownList("Domains", String.Empty)
+
+    <input type="submit" value="Search" /></p>
 }
 
 
 <table>
-<head></head>
 @for (int i = 0; i < ViewBag.results.Count; i++)
 {
     <tr>

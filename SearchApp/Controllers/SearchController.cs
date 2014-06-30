@@ -8,18 +8,27 @@ using System.Threading.Tasks;
 using SearchApp.Models;
 using System.Dynamic;
 using SearchApp.ApiSupportClasses;
+using SearchApp.DataAccess.Interfaces;
+using SearchApp.DataAccess.Implementation;
 
 
 namespace SearchApp.Controllers
 {
     public class SearchController : Controller
-    { 
+    {
+        private IUnitOfWork unitOfWork;
+
+        public SearchController()
+        {
+            unitOfWork = new UnitOfWork<DataContext>();
+        }
         //
         // GET: /Search/
         public ActionResult Index(string searchString, string Domain)
         {
             //List of FreebaseEntity objects
             List<FreebaseEntity> results = new List<FreebaseEntity>();
+            ViewBag.Domains = new SelectList(unitOfWork.getContext().Domain, "ID", "Name");
 
             if (!String.IsNullOrEmpty(searchString) && !String.IsNullOrEmpty(Domain))
             {
@@ -51,8 +60,7 @@ namespace SearchApp.Controllers
             //sending the results to the View (Index)
             ViewBag.results = results;
 
-            var model = new SearchModel();
-            return View(model);
+            return View();
         }
 	}
 }

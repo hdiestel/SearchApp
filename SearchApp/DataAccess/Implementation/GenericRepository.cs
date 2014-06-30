@@ -25,11 +25,6 @@ namespace SearchApp.DataAccess.Implementation
             this.context = context;
         }
 
-        public DataContext getContext()
-        {
-            return context;
-        }
-
         public void Insert(TEntity entity)
         {
             set.Add(entity);
