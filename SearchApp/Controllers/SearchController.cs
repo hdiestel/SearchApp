@@ -24,17 +24,24 @@ namespace SearchApp.Controllers
         }
         //
         // GET: /Search/
-        public ActionResult Index(string searchString, string Domain)
+        public ActionResult Index(string searchString, string Domains)
         {
             //List of FreebaseEntity objects
             List<FreebaseEntity> results = new List<FreebaseEntity>();
             ViewBag.Domains = new SelectList(unitOfWork.getContext().Domain, "ID", "Name");
 
-            if (!String.IsNullOrEmpty(searchString) && !String.IsNullOrEmpty(Domain))
+            if (!String.IsNullOrEmpty(searchString))
             {
                 //Creating SearchService and performing a search query
                 SearchService searchService = FreebaseServices.CreateSearchService();
-                SearchServiceResponse searchResponse = searchService.Read(searchString, filter: "(any domain:/" + Domain + ")");
+                SearchServiceResponse searchResponse;
+                if (!String.IsNullOrEmpty(Domains))
+                {
+                    int domainId = Convert.ToInt32(Domains);
+                    searchResponse = searchService.Read(searchString, filter: "(any domain:/" + unitOfWork.GetById<Domains>(domainId).FreebaseName + ")");
+                }
+                else
+                    searchResponse = searchService.Read(searchString);
 
                 //Iterating over every result
                 foreach(SearchResult result in searchResponse.Results)

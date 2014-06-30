@@ -4,6 +4,9 @@ using System.Linq;
 using System.Web;
 using Freebase4net;
 using System.Dynamic;
+using SearchApp.DataAccess.Interfaces;
+using SearchApp.DataAccess.Implementation;
+using SearchApp.Models;
 
 namespace SearchApp.ApiSupportClasses
 {
@@ -38,6 +41,8 @@ namespace SearchApp.ApiSupportClasses
         public ImageService imageService;
         public MqlReadService mqlReadService;
 
+        private IUnitOfWork unitOfWork;
+
 
         //--------------------------------------------------------------------------------
         //Methods
@@ -51,6 +56,8 @@ namespace SearchApp.ApiSupportClasses
             this.textService = FreebaseServices.CreateTextService();
             this.imageService = FreebaseServices.CreateImageService();
             this.mqlReadService = FreebaseServices.CreateMqlReadService();
+
+            unitOfWork = new UnitOfWork<DataContext>();
         }
 
 
@@ -98,27 +105,19 @@ namespace SearchApp.ApiSupportClasses
         public void getFreebaseType()
         {
             string type = "";
+            IQueryable<Types> allFreebaseTypes =  unitOfWork.Get<Types>();
+            List<string> freebaseTypeNames = (from t in allFreebaseTypes
+                                                   select t.FreebaseName).ToList<string>();
 
             //looking into every type we've got
             for (int i = 0; i < this.typesList.Count; i++)
             {
-                string currentType = this.typesList[i];
-
-                //checking if the current type is one of ours
-                switch (currentType)
+                string typeName = this.typesList[i];
+                if (freebaseTypeNames.Contains(typeName))
                 {
-                    case "/people/person":
-                        type = "person";
-                        break;
-                    case "/business/company":
-                        type = "company";
-                        break;
-                    case "/book/book":
-                        type = "book";
-                        break;
-                    case "/location/country":
-                        type = "country";
-                        break;
+                    int index = freebaseTypeNames.IndexOf(typeName);
+                    type = freebaseTypeNames[index];
+                    break;
                 }
             }
 
