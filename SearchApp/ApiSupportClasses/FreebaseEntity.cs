@@ -125,7 +125,26 @@ namespace SearchApp.ApiSupportClasses
             //Add the linked attributes of othis type to the query
             foreach(Attributes attribute in type.Attributes)
             {
-                query.Add(attribute.FreebaseName, null);
+                if (attribute.resultType == "1")
+                    query.Add(attribute.FreebaseName, null);
+                else if (attribute.resultType == "2")
+                {
+                    query.Add(attribute.FreebaseName, new Dictionary<Object, Object>() {
+                                                        {"name",null}
+                                                       });
+
+                    for (int i = 0; i < this.mqlResult.Count; i++)
+                    {
+                        var typeIds = this.mqlResult[i]["type"];
+                        for (int j = 0; j < typeIds.Count; j++)
+                        {
+                            string typeName = typeIds[j]["id"];
+                            typesList.Add(typeName);
+                        }
+                    }
+                }
+                    
+
             }
             
             // create mqlresult
@@ -137,7 +156,20 @@ namespace SearchApp.ApiSupportClasses
             {
                 foreach (Attributes attribute in type.Attributes)
                 {
-                    identifiedAttributes.Add(attribute.Name, (string) results[i][attribute.FreebaseName]);
+                    if(attribute.resultType == "1")
+                        identifiedAttributes.Add(attribute.Name, (string) results[i][attribute.FreebaseName]);
+                    else if(attribute.resultType == "2")
+                    {
+                        var values = results[i][attribute.FreebaseName];
+                        string refinedValues = "";
+                        for (int j = 0; j < values.Count; j++)
+                        {
+                           refinedValues += values[j]["name"];
+                           if (j != values.Count - 1)
+                               refinedValues += ", ";
+                        }
+                        identifiedAttributes.Add(attribute.Name, refinedValues);
+                    }
                 }
             }
         }

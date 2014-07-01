@@ -17,6 +17,9 @@
         <th>
             @Html.DisplayNameFor(model => model.FreebaseName)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.resultType)
+        </th>
         <th></th>
     </tr>
 
@@ -27,6 +30,9 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.FreebaseName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.resultType)
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
