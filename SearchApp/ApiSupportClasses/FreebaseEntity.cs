@@ -79,13 +79,13 @@ namespace SearchApp.ApiSupportClasses
         public void identifyTypes()
         {
             //defining variables            
-            dynamic mql = new ExpandoObject();
+            var mql = new ExpandoObject() as IDictionary<string, Object>;
 
             //filling the fields of the query
-            mql.id = id;
-            mql.type = new Dictionary<Object, Object>() {
-                {"id",null}
-            };
+            mql.Add("type", new Dictionary<Object, Object>() {
+                                {"id",null}
+                            });
+            mql.Add("id", this.id);
 
             //querying
             MqlReadServiceResponse mqlResponse = mqlReadService.Read(mql);
@@ -117,7 +117,6 @@ namespace SearchApp.ApiSupportClasses
 
         public void identifyAttributes(Types type)
         {
-            
             var query = new ExpandoObject() as IDictionary<string, Object>;
             query.Add("type", type.FreebaseName);
             query.Add("id", id);
@@ -125,11 +124,21 @@ namespace SearchApp.ApiSupportClasses
             //Add the linked attributes of othis type to the query
             foreach(Attributes attribute in type.Attributes)
             {
-                query.Add(attribute.FreebaseName, null);
+                if (attribute.resultType == "1")
+                    query.Add(attribute.FreebaseName.Trim(), null);
+                    
+                else if (attribute.resultType == "2")
+                {
+                    query.Add(attribute.FreebaseName.Trim(), new Dictionary<Object, Object>() {
+                                                        {"name",null}
+                                                       });
+                }
             }
             
             // create mqlresult
-            MqlReadServiceResponse mqlResponse = mqlReadService.Read(query);
+            this.mqlReadService = FreebaseServices.CreateMqlReadService();
+            MqlReadServiceResponse mqlResponse = new MqlReadServiceResponse();
+            mqlResponse = mqlReadService.Read(query);
             List<dynamic> results = mqlResponse.Results;
 
             //Get the attribute key/value pairs
@@ -137,7 +146,21 @@ namespace SearchApp.ApiSupportClasses
             {
                 foreach (Attributes attribute in type.Attributes)
                 {
-                    identifiedAttributes.Add(attribute.Name, (string) results[i][attribute.FreebaseName]);
+                    if(attribute.resultType == "1")
+                        identifiedAttributes.Add(attribute.Name, (string) results[i][attribute.FreebaseName]);
+                        
+                    else if(attribute.resultType == "2")
+                    {
+                        var values = results[i][attribute.FreebaseName];
+                        string refinedValues = "";
+                        for (int j = 0; j < values.Count; j++)
+                        {
+                           refinedValues += values[j]["name"];
+                           if (j != values.Count - 1)
+                               refinedValues += ", ";
+                        }
+                        identifiedAttributes.Add(attribute.Name, refinedValues);
+                    }
                 }
             }
         }

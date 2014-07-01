@@ -42,7 +42,7 @@ namespace SearchApp.Controllers
                     searchResponse = searchService.Read(searchString, filter: "(any domain:/" + unitOfWork.GetById<Domains>(domainId).FreebaseName + ")",limit: 3);
                 }
                 else
-                    searchResponse = searchService.Read(searchString);
+                    searchResponse = searchService.Read(searchString, limit: 3);
 
                 //Iterating over every result
                 foreach(SearchResult result in searchResponse.Results)
@@ -58,7 +58,6 @@ namespace SearchApp.Controllers
                     {
                         //and identify all attribute values according to the identified types
                         newEntity.identifyAttributes(type);
-                        Thread.Sleep(100);
                     }
                     //it only takes results which does not have a empty description
                     if (!String.IsNullOrEmpty(newEntity.description))
