@@ -58,6 +58,7 @@ namespace SearchApp.Controllers
                     {
                         //and identify all attribute values according to the identified types
                         newEntity.identifyAttributes(type);
+                        Thread.Sleep(100);
                     }
                     //it only takes results which does not have a empty description
                     if (!String.IsNullOrEmpty(newEntity.description))

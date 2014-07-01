@@ -55,7 +55,7 @@ namespace SearchApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include="ID,Name,FreebaseName,resultType")] Attributes attribute)
+        public ActionResult Create([Bind(Include="ID,Name,FreebaseName")] Attributes attribute)
         {
             if (ModelState.IsValid)
             {
@@ -87,7 +87,7 @@ namespace SearchApp.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,Name,FreebaseName,resultType")] Attributes attribute)
+        public ActionResult Edit([Bind(Include="ID,Name,FreebaseName")] Attributes attribute)
         {
             if (ModelState.IsValid)
             {
