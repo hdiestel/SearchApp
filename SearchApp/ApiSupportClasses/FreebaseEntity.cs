@@ -17,7 +17,6 @@ namespace SearchApp.ApiSupportClasses
          * id: Entity's Freebase ID
          * description: Entity's short description
          * imageUrl: Entity's image URL
-         * type: Entity's type 
          */
         public string id;
         public string description;
@@ -25,12 +24,14 @@ namespace SearchApp.ApiSupportClasses
 
         /* 
          Attributes - TypeIdentifier
-         * type: TODO
+         * 
          * typesList: list which will contain all the types of a given ID
          */
-        public string type; //TODO: notable type; select one type; multiple types?
         public List<dynamic> mqlResult;
         public List<string> typesList = new List<string>();
+
+        public List<Types> identifiedTypes = new List<Types>();
+        public Dictionary<string, string> identifiedAttributes = new Dictionary<string, string>();
 
         /* 
          Attributes - Freebase4Net
@@ -98,16 +99,9 @@ namespace SearchApp.ApiSupportClasses
                     typesList.Add(typeName);
                 }
             }
-        }
-
-
-        //Return the Entity's type - TODO
-        public void getFreebaseType()
-        {
-            string type = "";
-            IQueryable<Types> allFreebaseTypes =  unitOfWork.Get<Types>();
+            List<Types> allFreebaseTypes = unitOfWork.Get<Types>().ToList<Types>();
             List<string> freebaseTypeNames = (from t in allFreebaseTypes
-                                                   select t.FreebaseName).ToList<string>();
+                                              select t.FreebaseName).ToList<string>();
 
             //looking into every type we've got
             for (int i = 0; i < this.typesList.Count; i++)
@@ -116,12 +110,36 @@ namespace SearchApp.ApiSupportClasses
                 if (freebaseTypeNames.Contains(typeName))
                 {
                     int index = freebaseTypeNames.IndexOf(typeName);
-                    type = freebaseTypeNames[index];
-                    break;
+                    identifiedTypes.Add(allFreebaseTypes[index]);
                 }
             }
+        }
 
-            this.type = type;
+        public void identifyAttributes(Types type)
+        {
+            
+            var query = new ExpandoObject() as IDictionary<string, Object>;
+            query.Add("type", type.FreebaseName);
+            query.Add("id", id);
+
+            //Add the linked attributes of othis type to the query
+            foreach(Attributes attribute in type.Attributes)
+            {
+                query.Add(attribute.FreebaseName, null);
+            }
+            
+            // create mqlresult
+            MqlReadServiceResponse mqlResponse = mqlReadService.Read(query);
+            List<dynamic> results = mqlResponse.Results;
+
+            //Get the attribute key/value pairs
+            for (int i = 0; i < results.Count; i++)
+            {
+                foreach (Attributes attribute in type.Attributes)
+                {
+                    identifiedAttributes.Add(attribute.Name, (string) results[i][attribute.FreebaseName]);
+                }
+            }
         }
     }
 }

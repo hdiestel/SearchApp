@@ -22,7 +22,18 @@
     <tr>
         <td><img src=@ViewBag.results[i].imageUrl /></td>
         <td>@ViewBag.results[i].description</td>
-        <td>@ViewBag.results[i].type</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>
+        @foreach (KeyValuePair<string, string> entry in @ViewBag.results[i].identifiedAttributes)
+        {
+            if(!String.IsNullOrEmpty(entry.Value))
+            {  
+                <b>@entry.Key</b> @entry.Value <br />
+            }
+        }
+        </td>
     </tr>
     <tr><td><br /></td></tr>
 }

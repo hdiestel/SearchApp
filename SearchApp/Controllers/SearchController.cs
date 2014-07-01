@@ -10,6 +10,7 @@ using System.Dynamic;
 using SearchApp.ApiSupportClasses;
 using SearchApp.DataAccess.Interfaces;
 using SearchApp.DataAccess.Implementation;
+using System.Threading;
 
 
 namespace SearchApp.Controllers
@@ -38,7 +39,7 @@ namespace SearchApp.Controllers
                 if (!String.IsNullOrEmpty(Domains))
                 {
                     int domainId = Convert.ToInt32(Domains);
-                    searchResponse = searchService.Read(searchString, filter: "(any domain:/" + unitOfWork.GetById<Domains>(domainId).FreebaseName + ")");
+                    searchResponse = searchService.Read(searchString, filter: "(any domain:/" + unitOfWork.GetById<Domains>(domainId).FreebaseName + ")",limit: 3);
                 }
                 else
                     searchResponse = searchService.Read(searchString);
@@ -51,10 +52,14 @@ namespace SearchApp.Controllers
                     newEntity.getDescription();
                     newEntity.getImageUrl();
 
-                    //testing types
+                    //identify all the types we defined
                     newEntity.identifyTypes();
-                    newEntity.getFreebaseType();
-                    
+                    foreach (Types type in newEntity.identifiedTypes)
+                    {
+                        //and identify all attribute values according to the identified types
+                        newEntity.identifyAttributes(type);
+                        Thread.Sleep(100);
+                    }
                     //it only takes results which does not have a empty description
                     if (!String.IsNullOrEmpty(newEntity.description))
                     {
