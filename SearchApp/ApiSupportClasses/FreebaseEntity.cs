@@ -79,13 +79,13 @@ namespace SearchApp.ApiSupportClasses
         public void identifyTypes()
         {
             //defining variables            
-            dynamic mql = new ExpandoObject();
+            var mql = new ExpandoObject() as IDictionary<string, Object>;
 
             //filling the fields of the query
-            mql.id = id;
-            mql.type = new Dictionary<Object, Object>() {
-                {"id",null}
-            };
+            mql.Add("type", new Dictionary<Object, Object>() {
+                                {"id",null}
+                            });
+            mql.Add("id", this.id);
 
             //querying
             MqlReadServiceResponse mqlResponse = mqlReadService.Read(mql);
