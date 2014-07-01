@@ -42,7 +42,7 @@ namespace SearchApp.Controllers
                     searchResponse = searchService.Read(searchString, filter: "(any domain:/" + unitOfWork.GetById<Domains>(domainId).FreebaseName + ")",limit: 3);
                 }
                 else
-                    searchResponse = searchService.Read(searchString);
+                    searchResponse = searchService.Read(searchString, limit: 3);
 
                 //Iterating over every result
                 foreach(SearchResult result in searchResponse.Results)

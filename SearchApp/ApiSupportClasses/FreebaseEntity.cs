@@ -117,7 +117,6 @@ namespace SearchApp.ApiSupportClasses
 
         public void identifyAttributes(Types type)
         {
-            
             var query = new ExpandoObject() as IDictionary<string, Object>;
             query.Add("type", type.FreebaseName);
             query.Add("id", id);
@@ -126,29 +125,20 @@ namespace SearchApp.ApiSupportClasses
             foreach(Attributes attribute in type.Attributes)
             {
                 if (attribute.resultType == "1")
-                    query.Add(attribute.FreebaseName, null);
+                    query.Add(attribute.FreebaseName.Trim(), null);
+                    
                 else if (attribute.resultType == "2")
                 {
-                    query.Add(attribute.FreebaseName, new Dictionary<Object, Object>() {
+                    query.Add(attribute.FreebaseName.Trim(), new Dictionary<Object, Object>() {
                                                         {"name",null}
                                                        });
-
-                    for (int i = 0; i < this.mqlResult.Count; i++)
-                    {
-                        var typeIds = this.mqlResult[i]["type"];
-                        for (int j = 0; j < typeIds.Count; j++)
-                        {
-                            string typeName = typeIds[j]["id"];
-                            typesList.Add(typeName);
-                        }
-                    }
                 }
-                    
-
             }
             
             // create mqlresult
-            MqlReadServiceResponse mqlResponse = mqlReadService.Read(query);
+            this.mqlReadService = FreebaseServices.CreateMqlReadService();
+            MqlReadServiceResponse mqlResponse = new MqlReadServiceResponse();
+            mqlResponse = mqlReadService.Read(query);
             List<dynamic> results = mqlResponse.Results;
 
             //Get the attribute key/value pairs
@@ -158,6 +148,7 @@ namespace SearchApp.ApiSupportClasses
                 {
                     if(attribute.resultType == "1")
                         identifiedAttributes.Add(attribute.Name, (string) results[i][attribute.FreebaseName]);
+                        
                     else if(attribute.resultType == "2")
                     {
                         var values = results[i][attribute.FreebaseName];
