@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="SearchApp.Controllers.AttributeController">
+    <Position X="4.75" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACABAACAAAAAAACAAAEAAEACAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\AttributeController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SearchApp.Controllers.DomainController">
+    <Position X="0.75" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACABAACAAAAAAACAAAEAAEACAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\DomainController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SearchApp.Controllers.TypeController">
+    <Position X="2.75" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACABAACAAAAAAACAAAEAAEACAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\TypeController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SearchApp.Models.Attributes">
+    <Position X="4.75" Y="3.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAgAAAAAAAAAQAAAAgAAAAAAAAAAAAABA=</HashCode>
+      <FileName>Models\Attributes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SearchApp.Models.Domains">
+    <Position X="0.75" Y="3.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAgAAAAAAAAAQAAAAgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Domains.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SearchApp.Models.Types">
+    <Position X="2.75" Y="3.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAAAAAAAQQAAAgAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>Models\Types.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SearchApp.DataAccess.Implementation.UnitOfWork&lt;TDbContext&gt;">
+    <Position X="6.75" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>gAYCAEQAACEAAABAAAAAAAAAACEEAAgAAABAAAAgAIA=</HashCode>
+      <FileName>DataAccess\Implementation\UnitOfWork.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.217" />
+  </Class>
+  <Class Name="SearchApp.DataAccess.Implementation.GenericRepository&lt;TEntity&gt;">
+    <Position X="9" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAQCAEAAAAAAAABAAAQAAAAAACEAAAAAAAAAAAAAAIA=</HashCode>
+      <FileName>DataAccess\Implementation\GenericRepository.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
