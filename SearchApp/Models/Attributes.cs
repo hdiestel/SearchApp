@@ -12,7 +12,10 @@ namespace SearchApp.Models
         public int ID { get; set; }
         [Required]
         public string Name { get; set; }
+        [Required]
         public string FreebaseName { get; set; }
+
+        public string resultType { get; set; }
         public virtual ICollection<Types> Types { get; set; }
     }
 }
