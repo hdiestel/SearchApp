@@ -26,6 +26,29 @@
             @Html.DisplayFor(model => model.FreebaseName)
         </dd>
 
+        <dt>
+            @Html.DisplayNameFor(model => model.Domains)
+        </dt>
+        <dd>
+            <ul>
+                @foreach (var item in Model.Domains)
+                {
+                    <li>@item.Name</li>
+                }
+            </ul>
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Attributes)
+        </dt>
+        <dd>
+            <ul>
+                @foreach (var attribute in Model.Attributes)
+                {
+                    <li>@attribute.Name</li>
+                }
+            </ul>
+        </dd>
     </dl>
 </div>
 <p>

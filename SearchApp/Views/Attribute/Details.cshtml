@@ -25,12 +25,25 @@
         <dd>
             @Html.DisplayFor(model => model.FreebaseName)
         </dd>
+
         <dt>
             @Html.DisplayNameFor(model => model.resultType)
         </dt>
 
         <dd>
             @Html.DisplayFor(model => model.resultType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Types)
+        </dt>
+        <dd>
+            <ul>
+                @foreach (var item in Model.Types)
+                {
+                    <li>@item.Name</li>
+                }
+            </ul>
         </dd>
 
     </dl>
